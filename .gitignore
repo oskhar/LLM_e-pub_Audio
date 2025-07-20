@@ -1,0 +1,5 @@
+.env
+__pycache__
+*.epub
+model_cache
+output_audio
