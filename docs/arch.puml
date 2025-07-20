@@ -1,0 +1,53 @@
+@startuml
+title Flow Diagram - pre_train_translation_model.py
+
+start
+
+:Login ke HuggingFace;
+
+:Load konfigurasi dari class Config;
+
+:Inisialisasi EPUBProcessor;
+:Ekstrak teks dari EPUB (book.epub);
+note right
+Menggunakan BeautifulSoup dan
+ebooklib untuk ekstraksi teks dari
+tag HTML seperti <p>, <div>, dll
+end note
+
+:Inisialisasi TextPreprocessor;
+:Clean text hasil ekstraksi;
+:Split text menjadi kalimat;
+:Filter kalimat berdasarkan panjang;
+note right
+Menggunakan regex dan batasan
+Config.MIN_SENTENCE_LENGTH dan
+Config.MAX_SENTENCE_LENGTH
+end note
+
+if (Apakah ada kalimat valid?) then (Ya)
+  :Inisialisasi TranslationTrainer;
+  :Load model dan tokenizer dari HuggingFace;
+
+  :Generate terjemahan awal dari kalimat;
+  note right
+  Menggunakan model pre-trained
+  Helsinki-NLP/opus-mt-ar-en
+  end note
+
+  :Buat DataFrame (source, target);
+  :Konversi ke HuggingFace Dataset;
+  :Preprocessing tokenisasi untuk training;
+
+  :Siapkan argumen training;
+  :Training menggunakan Seq2SeqTrainer;
+  :Simpan model dan tokenizer ke SAVE_DIR;
+  :Selesai;
+  stop
+
+else (Tidak)
+  :Tampilkan pesan error;
+  stop
+endif
+
+@enduml
